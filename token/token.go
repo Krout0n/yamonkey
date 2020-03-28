@@ -17,8 +17,15 @@ const (
 
 	ASSIGN    = "="
 	PLUS      = "+"
+	MINUS     = "-"
+	BANG      = "!"
+	ASTERISK  = "*"
+	SLASH     = "/"
 	COMMA     = ","
 	SEMICOLON = ";"
+
+	LT = "<"
+	GT = ">"
 
 	LPAREN = "("
 	RPAREN = ")"
