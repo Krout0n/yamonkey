@@ -238,3 +238,94 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int) bool {
 
 	return true
 }
+
+func TestInfixExpression(t *testing.T) {
+	infixTests := []struct {
+		input    string
+		left     int
+		operator string
+		right    int
+	}{
+		{"5+5;", 5, "+", 5},
+		{"5-5;", 5, "-", 5},
+		{"5*5;", 5, "*", 5},
+		{"5/5;", 5, "/", 5},
+		{"5>5;", 5, ">", 5},
+		{"5<5;", 5, "<", 5},
+		{"5==5;", 5, "==", 5},
+		{"5!=5;", 5, "!=", 5},
+	}
+
+	for _, tt := range infixTests {
+		l := lexer.New(tt.input)
+		p := New(l)
+
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*ast.InfixExpression)
+
+		if !ok {
+			t.Fatalf("stmt.Expression is not ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+
+		if !testIntegerLiteral(t, exp.Left, tt.left) {
+			return
+		}
+
+		if exp.Operator != tt.operator {
+			t.Errorf("operator value not %s. got=%s", tt.operator, exp.Operator)
+		}
+
+		if !testIntegerLiteral(t, exp.Right, tt.right) {
+			return
+		}
+	}
+}
+
+func TestInfixExpressionPrecedence(t *testing.T) {
+	infixTests := []struct {
+		input  string
+		output string
+	}{
+		{"1+2*3+4;", "((1+(2*3))+4)"},
+	}
+
+	for _, tt := range infixTests {
+		l := lexer.New(tt.input)
+		p := New(l)
+
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*ast.InfixExpression)
+
+		if !ok {
+			t.Fatalf("stmt.Expression is not ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+
+		if exp.String() != tt.output {
+			t.Fatalf("String error: expected=%s, got=%s", tt.output, exp.String())
+		}
+	}
+}
