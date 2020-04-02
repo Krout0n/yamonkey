@@ -329,3 +329,41 @@ func TestInfixExpressionPrecedence(t *testing.T) {
 		}
 	}
 }
+
+func TestBooleanLiteralExpression(t *testing.T) {
+	input := []struct {
+		input        string
+		booleanValue bool
+	}{
+		{"true;", true},
+		{"false;", false},
+	}
+
+	for _, tt := range input {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements has not enough statements. got=%d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		literal, ok := stmt.Expression.(*ast.BooleanLiteral)
+
+		if !ok {
+			t.Fatalf("stmt.Expression is not BooleanLiteral. got=%T", stmt.Expression)
+		}
+
+		if literal.Value != tt.booleanValue {
+			t.Errorf("boolean value not %t. got=%t", tt.booleanValue, literal.Value)
+		}
+	}
+
+}
