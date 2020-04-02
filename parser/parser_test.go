@@ -299,6 +299,7 @@ func TestInfixExpressionPrecedence(t *testing.T) {
 		output string
 	}{
 		{"1+2*3+4;", "((1+(2*3))+4)"},
+		{"(1+2)*(3+4)", "((1+2)*(3+4))"},
 	}
 
 	for _, tt := range infixTests {
