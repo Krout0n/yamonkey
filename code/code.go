@@ -19,6 +19,7 @@ type Definition struct {
 }
 
 var definitions = map[Opcode]*Definition{
+	// There is only one operand, the width is 2byte.
 	OpConstant: {"OpConstant", []int{2}},
 }
 
@@ -48,7 +49,9 @@ func Make(op Opcode, operands ...int) []byte {
 		width := def.OperandWidths[i]
 		switch width {
 		case 2:
-			binary.BigEndian.PutUint16(instructions[offset:], uint16(o))
+			// 65534 => 0xfffd
+			// [0, 0, 0, 0, ...] => [0xff, 0xfd, ...]
+			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
 		}
 		offset += width
 	}
