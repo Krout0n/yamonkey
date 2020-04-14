@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"monkey/ast"
 	"monkey/code"
-	"monkey/lexer"
 	"monkey/object"
-	"monkey/parser"
+	"monkey/token"
 	"testing"
 )
 
@@ -14,12 +13,6 @@ type compilerTestCase struct {
 	input                string
 	expectedConstants    []interface{}
 	expectedInstructions []code.Instructions
-}
-
-func parse(input string) *ast.Program {
-	l := lexer.New(input)
-	p := parser.New(l)
-	return p.ParseProgram()
 }
 
 func TestIntegerArithmetic(t *testing.T) {
@@ -39,7 +32,15 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 
 	for _, tt := range tests {
-		program := parse(tt.input)
+		program := &ast.ExpressionStatement{
+			Token: token.Token{Type: token.PLUS, Literal: "+"},
+			Expression: &ast.InfixExpression{
+				Token:    token.Token{Type: token.PLUS, Literal: "+"},
+				Left:     &ast.IntegerLiteral{Value: 1},
+				Operator: "+",
+				Right:    &ast.IntegerLiteral{Value: 2},
+			},
+		}
 
 		compiler := New()
 		err := compiler.Compile(program)
@@ -62,8 +63,9 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 
 func testInstructions(expected []code.Instructions, actual code.Instructions) error {
 	concatted := concatInstructions(expected)
+	fmt.Printf("%+v == %+v\n", concatted, actual)
 
-	if len(actual) != len(expected) {
+	if len(actual) != len(concatted) {
 		return fmt.Errorf("wrong instructions length.\nwant=%q\ngot =%q", concatted, actual)
 	}
 

@@ -14,7 +14,7 @@ type Integer struct {
 }
 
 // Type returns the type of the object
-func (i *Integer) Type() ObjectType { return "INTEGER" }
+func (i Integer) Type() ObjectType { return "INTEGER" }
 
 // Inspect returns a stringified version of the object for debugging
-func (i *Integer) Inspect() string { return fmt.Sprintf("%d", i.Value) }
+func (i Integer) Inspect() string { return fmt.Sprintf("%d", i.Value) }
