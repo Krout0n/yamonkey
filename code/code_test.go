@@ -11,6 +11,7 @@ func TestMake(t *testing.T) {
 		expected []byte
 	}{
 		{OpConstant, []int{65534}, []byte{byte(OpConstant), 255, 254}},
+		{OpAdd, []int{}, []byte{byte(OpAdd)}},
 	}
 
 	for _, tt := range tests {
@@ -39,6 +40,30 @@ func TestInstructionsString(t *testing.T) {
 0006 OpConstant 65535
 `[1:]
 	concatted := Instructions{}
+
+	for _, ins := range instructions {
+		// concatted = [0 0 1 0 0 2 0 255 255]
+		// 0 0 1 <- OpConstant 0x00 0x01
+		// 0 0 2 <- OpConstant 0x00 0x02
+		// 0 255 255 <- OpConstant 0xff 0xff
+		concatted = append(concatted, ins...)
+	}
+
+	if concatted.String() != expected {
+		t.Errorf("instructions wrongly formatted.\nwant=%q\ngot=%q", expected, concatted.String())
+	}
+
+	instructions = []Instructions{
+		Make(OpAdd),
+		Make(OpConstant, 2),
+		Make(OpConstant, 65535),
+	}
+	expected = `
+0000 OpAdd
+0001 OpConstant 2
+0004 OpConstant 65535
+`[1:]
+	concatted = Instructions{}
 
 	for _, ins := range instructions {
 		// concatted = [0 0 1 0 0 2 0 255 255]
