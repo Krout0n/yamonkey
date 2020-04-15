@@ -22,7 +22,8 @@ func TestIntegerArithmetic(t *testing.T) {
 			input:             "1 + 2",
 			expectedConstants: []interface{}{1, 2},
 			// ここの0, 1ってもしかしてcontant pool へのindexか!?
-			expectedInstructions: []code.Instructions{code.Make(code.OpConstant, 0), code.Make(code.OpConstant, 1)},
+			// POI
+			expectedInstructions: []code.Instructions{code.Make(code.OpConstant, 0), code.Make(code.OpConstant, 1), code.Make(code.OpAdd)},
 		},
 	}
 
@@ -64,7 +65,6 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 
 func testInstructions(expected []code.Instructions, actual code.Instructions) error {
 	concatted := concatInstructions(expected)
-	fmt.Printf("%+v == %+v\n", concatted, actual)
 
 	if len(actual) != len(concatted) {
 		return fmt.Errorf("wrong instructions length.\nwant=%q\ngot =%q", concatted, actual)
