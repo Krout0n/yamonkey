@@ -17,7 +17,7 @@ func parse(input string) *ast.Program {
 }
 
 func testIntegerObject(expected int64, actual object.Object) error {
-	result, ok := actual.(*object.Integer)
+	result, ok := actual.(object.Integer)
 	if !ok {
 		return fmt.Errorf("object is not Integer. got=%T (%+v)", actual, actual)
 	}
@@ -35,7 +35,8 @@ type vmTestcase struct {
 func TestIntegerArithmetic(t *testing.T) {
 	tests := []vmTestcase{
 		{"1", 1},
-		{"2", 2}, {"1 + 2", 2},
+		{"2", 2},
+		{"1 + 2", 2},
 	}
 	runVMTests(t, tests)
 }
@@ -56,7 +57,6 @@ func runVMTests(t *testing.T, tests []vmTestcase) {
 		if err != nil {
 			t.Fatalf("vm error: %s", err)
 		}
-
 		stackElem := vm.StackTop()
 		testExpectedObject(t, tt.expected, stackElem)
 	}

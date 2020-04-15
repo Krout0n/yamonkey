@@ -18,9 +18,9 @@ type VM struct {
 
 func New(bytecode *compiler.Bytecode) *VM {
 	return &VM{
-		constants:    []object.Object{},
-		instructions: code.Instructions{},
-		stack:        []object.Object{},
+		constants:    bytecode.Constants,
+		instructions: bytecode.Instructions,
+		stack:        make([]object.Object, stackSize),
 		sp:           0,
 	}
 }
