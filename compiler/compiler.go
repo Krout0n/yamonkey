@@ -46,10 +46,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 
 	case *ast.IntegerLiteral:
 		integer := object.Integer{Value: int64(node.Value)}
-		c.addConstant(integer)
-		c.emit(code.OpConstant, node.Value)
+		c.emit(code.OpConstant, c.addConstant(integer))
 	}
 	return nil
+}
+
+func (c *Compiler) addConstant(obj object.Object) int {
+	c.constants = append(c.constants, obj)
+	return len(c.constants) - 1
 }
 
 func (c *Compiler) emit(op code.Opcode, operands ...int) int {
@@ -58,16 +62,10 @@ func (c *Compiler) emit(op code.Opcode, operands ...int) int {
 	return pos
 }
 
-func (c *Compiler) addInstruction(ins code.Instructions) int {
-	posNewInstructions := len(c.instructions)
+func (c *Compiler) addInstruction(ins []byte) int {
+	posNewInstruction := len(c.instructions)
 	c.instructions = append(c.instructions, ins...)
-	return posNewInstructions
-}
-
-func (c *Compiler) addConstant(obj object.Object) int {
-	c.constants = append(c.constants, obj)
-	// indexを返してる
-	return len(c.constants) - 1
+	return posNewInstruction
 }
 
 func (c *Compiler) Bytecode() *Bytecode {

@@ -19,9 +19,10 @@ func TestIntegerArithmetic(t *testing.T) {
 
 	tests := []compilerTestCase{
 		{
-			input:                "1 + 2",
-			expectedConstants:    []interface{}{1, 2},
-			expectedInstructions: []code.Instructions{code.Make(code.OpConstant, 1), code.Make(code.OpConstant, 2)},
+			input:             "1 + 2",
+			expectedConstants: []interface{}{1, 2},
+			// ここの0, 1ってもしかしてcontant pool へのindexか!?
+			expectedInstructions: []code.Instructions{code.Make(code.OpConstant, 0), code.Make(code.OpConstant, 1)},
 		},
 	}
 
@@ -104,7 +105,7 @@ func testConstants(t *testing.T, expected []interface{}, actual []object.Object)
 }
 
 func testIntegerObject(expected int64, actual object.Object) error {
-	result, ok := actual.(*object.Integer)
+	result, ok := actual.(object.Integer)
 	if !ok {
 		return fmt.Errorf("object is not Integer. got=%T (%+v)", actual, actual)
 	}
