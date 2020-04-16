@@ -23,7 +23,11 @@ func TestIntegerArithmetic(t *testing.T) {
 			expectedConstants: []interface{}{1, 2},
 			// ここの0, 1ってもしかしてcontant pool へのindexか!?
 			// POI
-			expectedInstructions: []code.Instructions{code.Make(code.OpConstant, 0), code.Make(code.OpConstant, 1), code.Make(code.OpAdd)},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpPop)},
 		},
 	}
 
