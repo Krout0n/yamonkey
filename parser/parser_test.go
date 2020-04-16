@@ -227,7 +227,7 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int) bool {
 		return false
 	}
 
-	if integ.Value != value {
+	if int(integ.Value) != value {
 		t.Errorf("integ.Value not %d. got=%d", value, integ.Value)
 	}
 
