@@ -16,6 +16,9 @@ type VM struct {
 	sp           int
 }
 
+var True = &object.Boolean{true}
+var False = &object.Boolean{false}
+
 func New(bytecode *compiler.Bytecode) *VM {
 	return &VM{
 		constants:    bytecode.Constants,
@@ -51,6 +54,16 @@ func (vm *VM) Run() error {
 			}
 		case code.OpPop:
 			vm.pop()
+		case code.OpTrue:
+			err := vm.push(True)
+			if err != nil {
+				return err
+			}
+		case code.OpFalse:
+			err := vm.push(False)
+			if err != nil {
+				return err
+			}
 		}
 
 	}
