@@ -13,6 +13,9 @@ type Opcode byte
 const (
 	OpConstant Opcode = iota
 	OpAdd
+	OpSub
+	OpMul
+	OpDiv
 	OpPop
 )
 
@@ -25,6 +28,9 @@ var definitions = map[Opcode]*Definition{
 	// There is only one operand, the width is 2byte.
 	OpConstant: {"OpConstant", []int{2}},
 	OpAdd:      {"OpAdd", []int{}},
+	OpSub:      {"OpSub", []int{}},
+	OpMul:      {"OpMul", []int{}},
+	OpDiv:      {"OpDiv", []int{}},
 	OpPop:      {"OpPop", []int{}},
 }
 
@@ -71,6 +77,7 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 		switch width {
 		case 2:
 			// ここ実装バグってない？ ins[offset:offset+width]にするべきでしょ
+			// そんなことなかった
 			operands[i] = int(ReadUint16(ins[offset:]))
 		}
 		offset += width
