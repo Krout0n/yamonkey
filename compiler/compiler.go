@@ -87,6 +87,17 @@ func (c *Compiler) Compile(node ast.Node) error {
 		} else {
 			c.emit(code.OpFalse)
 		}
+	case *ast.PrefixExpression:
+		err := c.Compile(node.Right)
+		if err != nil {
+			return err
+		}
+		switch node.Operator {
+		case "-":
+			c.emit(code.OpMinus)
+		case "!":
+			c.emit(code.OpBang)
+		}
 	}
 
 	return nil
